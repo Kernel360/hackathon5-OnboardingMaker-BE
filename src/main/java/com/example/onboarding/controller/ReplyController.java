@@ -16,8 +16,8 @@ public class ReplyController {
     private final ReplyService replyService;
 
     @PostMapping("")
-    public Reply createReply(@RequestBody ReplyRequest request){
-        return replyService.save(request);
+    public ReplyResponse createReply(@RequestBody ReplyRequest request){
+        return toDto(replyService.save(request));
     }
 
     @GetMapping("")
@@ -26,12 +26,43 @@ public class ReplyController {
     }
 
     @PutMapping("/{replyId}")
-    public Reply updateReply(@PathVariable("replyId") int replyId, @RequestBody ReplyRequest request) {
-        return replyService.update(replyId, request);
+    public ReplyResponse updateReply(@PathVariable("replyId") int replyId, @RequestBody ReplyRequest request) {
+        return toDto(replyService.update(replyId, request));
     }
 
     @DeleteMapping("/{replyId}")
     public void deleteReply(@PathVariable("replyId") int replyId) {
         replyService.deleteById(replyId);
+    }
+
+    // 대댓글
+    @PostMapping("/{parentId}/nested")
+    public ReplyResponse createNestedReply(@PathVariable Long parentId,
+                                   @RequestBody ReplyRequest request) {
+        return toDto(replyService.saveNestedReply(parentId, request));
+    }
+
+    @GetMapping("/{parentId}/nested")
+    public List<ReplyResponse> getNestedReplies(@PathVariable Long parentId) {
+        return replyService.findNestedReplies(parentId);
+    }
+
+    private ReplyResponse toDto(Reply e) {
+        return ReplyResponse.builder()
+                .replyId(e.getReplyId())
+                .userId(e.getUser().getUserId())
+                .groupId(e.getGroup().getGroupId())
+                .content(e.getContent())
+                .finalTime(
+                        e.getUpdatedAt() != null
+                                ? e.getUpdatedAt()
+                                : e.getCreatedAt()
+                )
+                .parentReplyId(
+                        e.getParentReply() != null
+                                ? e.getParentReply().getReplyId()
+                                : null
+                )
+                .build();
     }
 }

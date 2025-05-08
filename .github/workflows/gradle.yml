@@ -50,6 +50,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-jar
+          path: build/libs/*.jar
+
+      - name: 디스크 트리 구조 확인
+        run: |
+          echo "=== 루트 디렉터리 ==="
+          ls -al .
+          echo "=== build/libs 디렉터리 ==="
+          ls -al build/libs || echo "build/libs 폴더가 없습니다"
 
       # - name: Deploy to EC2 via SSH
       #   uses: appleboy/ssh-action@v0.1.8

@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .securityContextRepository(new HttpSessionSecurityContextRepository())
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/register", "/api/user/login", "/api/mission/**", "/api/reply/**", "/api/missionWrite",
+                        .requestMatchers("/user/register", "/user/login", "/mission/**", "/reply/**", "/missionWrite",
                         		"/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 );

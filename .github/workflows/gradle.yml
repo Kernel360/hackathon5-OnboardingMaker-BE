@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      URL: ${{ secrets.URL }}
+      PASSWORD: ${{ secrets.PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 

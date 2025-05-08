@@ -35,13 +35,6 @@ public class MissionWriteController {
 		
 		missionWriteService.createMission(dto);
 		
-		System.out.println(dto.getCreatedAt());
-		System.out.println(dto.getDeadline());
-		System.out.println(dto.getDescription());
-		System.out.println(dto.getMissionId());
-		System.out.println(dto.getTitle());
-		System.out.println(dto.getTotalGroups());
-		
 		// TODO try~catch로 예외처리 하기
 
 		return new ResponseEntity<>(dto, HttpStatus.OK);

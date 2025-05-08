@@ -10,7 +10,7 @@ import java.util.List;
 public interface MissionRepository extends JpaRepository<Mission, Integer> {
 
     @Query("""
-    SELECT new com.example.onboarding.mission.dto.MissionListDto(
+    SELECT new com.example.onboarding.dto.MissionListDto(
           m.title, m.deadline
         )
     FROM Mission m

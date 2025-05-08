@@ -5,10 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-@RestControllerAdvice
+@Hidden
+@RestControllerAdvice(annotations = RestController.class)
 public class GlobalExceptionHandler {
 
     // IllegalArgumentException 해당 미션 없을 때

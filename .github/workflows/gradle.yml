@@ -52,14 +52,10 @@ jobs:
           name: app-jar
           path: .
 
-      - name: 다운로드된 파일 확인
-        run: |
-          echo ">>> build/libs 내용"
-          ls -al
-
       - name: 디스크 트리 구조 확인
         run: |
-          mv *.jar ./app.jar
+          mv *.jar app.jar
+          ls -al
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -68,7 +64,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: "*.jar"
+          source: "app.jar"
           target: "/home/ec2-user"
       # - name: Deploy to EC2 via SSH
       #   uses: appleboy/ssh-action@v0.1.8

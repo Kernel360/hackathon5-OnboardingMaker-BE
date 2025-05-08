@@ -68,4 +68,4 @@ jobs:
           target: "/home/${{ secrets.EC2_USER }}/app.jar"
           # 복사 후 원격에서 실행할 커맨드
           script: |
-            sudo systemctl restart ${{ secrets.SERVICE_NAME }}
+            sudo systemctl restart myapp

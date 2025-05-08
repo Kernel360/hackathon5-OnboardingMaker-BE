@@ -2,6 +2,7 @@ package com.example.onboarding.controller;
 
 import com.example.onboarding.dto.MissionListDto;
 import com.example.onboarding.dto.MissionResponseDto;
+import com.example.onboarding.dto.MissionTeamDto;
 import com.example.onboarding.service.MissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,4 +27,12 @@ public class MissionController {
     public MissionResponseDto getMissionDetail(@PathVariable Integer id) {
         return missionService.getMissionById(id);
     }
+    
+    // 미션 groupList 조회
+    @GetMapping("/{missionId}/teams")
+    public MissionTeamDto getMissionTeamInfo(@PathVariable("missionId") Integer missionId) {
+        return missionService.getMissionTitleAndTeamCount(missionId);
+    }
+    
+    
 }

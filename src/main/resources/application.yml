@@ -1,3 +1,10 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    doc-expansion: none
+    operations-sorter: alpha
+    tags-sorter: alpha
+
 spring:
   application:
     name: jpa

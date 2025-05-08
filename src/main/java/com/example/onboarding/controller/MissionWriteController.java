@@ -3,6 +3,7 @@ package com.example.onboarding.controller;
 import com.example.onboarding.OnboardingApplication;
 import com.example.onboarding.global.exception.GlobalExceptionHandler;
 import com.example.onboarding.dto.MissionWriteDTO;
+import com.example.onboarding.entity.Mission;
 import com.example.onboarding.service.MissionWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// @CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/missionWrite")
 public class MissionWriteController {
@@ -33,8 +34,8 @@ public class MissionWriteController {
 	@PostMapping
 	public ResponseEntity<MissionWriteDTO> postWrite(@RequestBody MissionWriteDTO dto) {
 		
-		missionWriteService.createMission(dto);
-		
+		Mission saved = missionWriteService.createMission(dto);
+		dto.setMissionId(saved.getMissionId());
 		// TODO try~catch로 예외처리 하기
 
 		return new ResponseEntity<>(dto, HttpStatus.OK);

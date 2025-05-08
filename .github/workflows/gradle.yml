@@ -85,7 +85,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           # 로컬 워크스페이스에서 EC2로 복사할 파일 경로
-          source: "*.jar"
+          source: "./*.jar"
           # EC2 에 복사할 대상 경로
           target: "/home/ec2-user/app.jar"
           # 복사 후 원격에서 실행할 커맨드

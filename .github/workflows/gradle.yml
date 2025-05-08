@@ -70,7 +70,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: "build/libs/*.jar"
+          source: "*.jar"
           target: "/home/ec2-user/app.jar"
       # - name: Deploy to EC2 via SSH
       #   uses: appleboy/ssh-action@v0.1.8

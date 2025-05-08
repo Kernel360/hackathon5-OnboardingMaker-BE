@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MissionListDto {
     private String title;
+    private String description;
     private LocalDateTime deadline;
 
 }

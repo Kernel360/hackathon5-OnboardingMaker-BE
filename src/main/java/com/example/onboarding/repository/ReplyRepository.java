@@ -3,5 +3,9 @@ package com.example.onboarding.repository;
 import com.example.onboarding.entity.Reply;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReplyRepository extends JpaRepository<Reply, Integer> {
+import java.util.List;
+
+public interface ReplyRepository extends JpaRepository<Reply, Long> {
+
+    List<Reply> findByParentReply_ReplyIdOrderByCreatedAtAsc(long parentId);
 }

@@ -17,4 +17,5 @@ public class ReplyResponse {
     private int groupId;
     private String content;
     private LocalDateTime finalTime;
+    private Long parentReplyId;
 }

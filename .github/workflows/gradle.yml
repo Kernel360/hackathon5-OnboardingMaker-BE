@@ -51,10 +51,11 @@ jobs:
         with:
           name: app-jar
           path: .
+
       - name: 다운로드된 파일 확인
         run: |
           echo ">>> build/libs 내용"
-          ls -al build/libs
+          ls -al
 
       - name: 디스크 트리 구조 확인
         run: |

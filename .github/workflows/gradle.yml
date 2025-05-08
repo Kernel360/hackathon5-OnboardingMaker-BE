@@ -50,7 +50,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-jar
-          path: build/libs/*.jar
+          path: .
+      - name: 다운로드된 파일 확인
+        run: |
+          echo ">>> build/libs 내용"
+          ls -al build/libs
 
       - name: 디스크 트리 구조 확인
         run: |

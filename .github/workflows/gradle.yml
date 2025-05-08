@@ -64,7 +64,7 @@ jobs:
           echo "=== build/libs 디렉터리 ==="
           ls -al build/libs || echo "build/libs 폴더가 없습니다"
       - name: Copy JAR to EC2
-        uses: appleboy/scp-action@v0.1.2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
@@ -86,7 +86,7 @@ jobs:
       #       scp -i ${{ secrets.EC2_SSH_KEY }} $JAR_FILE ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:$REMOTE_PATH
       #       ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo systemctl restart ${{ secrets.SERVICE_NAME }}"
       - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user

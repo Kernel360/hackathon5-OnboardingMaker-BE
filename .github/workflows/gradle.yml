@@ -27,6 +27,15 @@ jobs:
       - name: Build with Gradle Wrapper (skip tests)
         run: ./gradlew clean bootJar -x test
 
+      - name: Show built JARs
+        run: ls -l
+
+      - name: Show built JARs
+        run: ls -l build/
+
+      - name: Show built JARs
+        run: ls -l build/libs/
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:

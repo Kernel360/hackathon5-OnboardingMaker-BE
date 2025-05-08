@@ -59,10 +59,8 @@ jobs:
 
       - name: 디스크 트리 구조 확인
         run: |
-          echo "=== 루트 디렉터리 ==="
-          ls -al .
-          echo "=== build/libs 디렉터리 ==="
-          ls -al build/libs || echo "build/libs 폴더가 없습니다"
+          mv *.jar ./app.jar
+
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -71,7 +69,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: "*.jar"
-          target: "/home/ec2-user/app.jar"
+          target: "/home/ec2-user"
       # - name: Deploy to EC2 via SSH
       #   uses: appleboy/ssh-action@v0.1.8
       #   with:

@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mission")
+@RequestMapping("/api/mission")
 public class MissionController {
 
     private final MissionService missionService;

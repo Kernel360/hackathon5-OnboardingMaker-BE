@@ -36,8 +36,8 @@ public class ReplyService {
         return replyRepository.save(reply);
     }
 
-    public List<ReplyResponse> findAll() {
-        return replyRepository.findAll().stream()
+    public List<ReplyResponse> findAll(int groupID) {
+        return replyRepository.findAllByGroup_GroupId(groupID).stream()
                 .map(reply -> {
                     LocalDateTime finalTime = reply.getUpdatedAt() != null
                             ? reply.getUpdatedAt()
@@ -98,7 +98,6 @@ public class ReplyService {
                             .groupId(child.getGroup().getGroupId())
                             .content(child.getContent())
                             .finalTime(finalTime)
-                            .parentReplyId(parentId)
                             .build();
                 })
                 .collect(Collectors.toList());

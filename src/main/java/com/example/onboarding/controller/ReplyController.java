@@ -7,7 +7,12 @@ import com.example.onboarding.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reply")
@@ -17,17 +22,19 @@ public class ReplyController {
 
     @PostMapping("")
     public ReplyResponse createReply(@RequestBody ReplyRequest request){
-        return toDto(replyService.save(request));
+        Set<Long> visited = new HashSet<>();
+        return toDto(replyService.save(request), visited);
     }
 
-    @GetMapping("")
-    public List<ReplyResponse> getAllReplies(){
-        return replyService.findAll();
+    @GetMapping("/{groupID}")
+    public List<ReplyResponse> getAllReplies(@PathVariable("groupID") int groupID){
+        return replyService.findAll(groupID);
     }
 
     @PutMapping("/{replyId}")
     public ReplyResponse updateReply(@PathVariable("replyId") int replyId, @RequestBody ReplyRequest request) {
-        return toDto(replyService.update(replyId, request));
+        Set<Long> visited = new HashSet<>();
+        return toDto(replyService.update(replyId, request), visited);
     }
 
     @DeleteMapping("/{replyId}")
@@ -39,7 +46,8 @@ public class ReplyController {
     @PostMapping("/{parentId}/nested")
     public ReplyResponse createNestedReply(@PathVariable Long parentId,
                                    @RequestBody ReplyRequest request) {
-        return toDto(replyService.saveNestedReply(parentId, request));
+        Set<Long> visited = new HashSet<>();
+        return toDto(replyService.saveNestedReply(parentId, request), visited);
     }
 
     @GetMapping("/{parentId}/nested")
@@ -47,22 +55,35 @@ public class ReplyController {
         return replyService.findNestedReplies(parentId);
     }
 
-    private ReplyResponse toDto(Reply e) {
-        return ReplyResponse.builder()
+    private ReplyResponse toDto(Reply e, Set<Long> visited) {
+
+        if (!visited.add(e.getReplyId())) {
+            // 이미 매핑한 댓글이면 재귀 중단
+            return null;
+        }
+
+        LocalDateTime utcTime = Optional.ofNullable(e.getUpdatedAt()).orElse(e.getCreatedAt());
+        ZonedDateTime seoulZoned = utcTime.atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+        LocalDateTime seoulTime = seoulZoned.toLocalDateTime();
+
+        ReplyResponse dto = ReplyResponse.builder()
                 .replyId(e.getReplyId())
                 .userId(e.getUser().getUserId())
                 .groupId(e.getGroup().getGroupId())
                 .content(e.getContent())
-                .finalTime(
-                        e.getUpdatedAt() != null
-                                ? e.getUpdatedAt()
-                                : e.getCreatedAt()
-                )
-                .parentReplyId(
-                        e.getParentReply() != null
-                                ? e.getParentReply().getReplyId()
-                                : null
-                )
+                .finalTime(seoulTime)
+                .childReplies(new ArrayList<>())
                 .build();
+
+        List<ReplyResponse> children = e.getChildReplies().stream()
+                .map(child -> toDto(child, visited))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        dto.setChildReplies(children);
+
+        visited.remove(e.getReplyId());
+
+        return dto;
     }
 }

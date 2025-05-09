@@ -25,3 +25,10 @@ spring:
   output:
     ansi:
       enabled: always
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11=trace:

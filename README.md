@@ -109,7 +109,7 @@ com.example.onboarding
 |------|------------------------------|-----------------------------|
 | POST | `/api/user/login`            | 로그인               |
 | POST | `/api/user/register`         | 회원정보             |
-| GET  | `/api/mission/list           | 전체 미션 조회       |
+| GET  | `/api/mission/list`           | 전체 미션 조회       |
 | GET  | `/api/mission/{id}`          | 미션 별 팀페이지 목록 조회        |
 | GET  | `/api/mission/{id}/teams/{groupId}` | 미션 제출 페이지 조회   |
 | POST | `/api/missionWrite`          | 미션 생성            |

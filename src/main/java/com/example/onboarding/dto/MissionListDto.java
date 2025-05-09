@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class MissionListDto {
     private String title;
     private String description;
-    private LocalDateTime deadlWine;
+    private LocalDateTime deadline;
     private Integer missionId;
 
 }

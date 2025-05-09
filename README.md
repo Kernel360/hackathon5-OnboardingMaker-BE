@@ -107,14 +107,17 @@ com.example.onboarding
 
 | 메서드 | 경로                           | 설명                          |
 |------|------------------------------|-----------------------------|
-| POST | `/api/auth/login`            | 로그인 (JWT 발급)               |
-| POST | `/api/auth/logout`           | 로그아웃                       |
-| GET  | `/api/users/me`              | 내 정보 조회                    |
-| GET  | `/api/missions`              | 전체 미션 목록 조회               |
-| POST | `/api/missions`              | 미션 생성                      |
-| GET  | `/api/missions/{id}`         | 미션 상세 조회                   |
-| POST | `/api/missions/{id}/replies` | 해당 미션에 댓글 작성            |
-| GET  | `/api/missions/{id}/replies` | 해당 미션 댓글 목록 조회          |
+| POST | `/api/user/login`            | 로그인               |
+| POST | `/api/user/register`         | 회원정보             |
+| GET  | `/api/mission/list           | 전체 미션 조회       |
+| GET  | `/api/mission/{id}`          | 미션 별 팀페이지 목록 조회        |
+| GET  | `/api/mission/{id}/teams/{groupId}` | 미션 제출 페이지 조회   |
+| POST | `/api/missionWrite`          | 미션 생성            |
+| POST | `/api/reply`         | 댓글 작성                   |
+| GET  | `/api/reply/{groupId}`         | 댓글 &middot; 대댓글 조회   |
+| POST | `/api/reply/{parentId}/nested`         | 대댓글 작성        |
+| PUT  | `/api/reply/{replyId}` | 댓글 &middot; 대댓글 수정         |
+| DELETE  | `/api/reply/{replyId}` | 댓글 &middot; 대댓글 삭제        |
 
 ---
 

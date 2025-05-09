@@ -8,6 +8,11 @@ import com.example.onboarding.entity.User;
 import com.example.onboarding.repository.GroupRepository;
 import com.example.onboarding.repository.ReplyRepository;
 import com.example.onboarding.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,23 +41,35 @@ public class ReplyService {
         return replyRepository.save(reply);
     }
 
-    public List<ReplyResponse> findAll() {
-        return replyRepository.findAll().stream()
-                .map(reply -> {
-                    LocalDateTime finalTime = reply.getUpdatedAt() != null
-                            ? reply.getUpdatedAt()
-                            : reply.getCreatedAt();
+//    public List<ReplyResponse> findAll(int groupID) {
+//        return replyRepository.findAllByGroup_GroupId(groupID).stream()
+//                .map(reply -> {
+//                    LocalDateTime finalTime = reply.getUpdatedAt() != null
+//                            ? reply.getUpdatedAt()
+//                            : reply.getCreatedAt();
+//
+//                    return ReplyResponse.builder()
+//                            .replyId(reply.getReplyId())
+//                            .userId(reply.getUser().getUserId())
+//                            .groupId(reply.getGroup().getGroupId())
+//                            .content(reply.getContent())
+//                            .finalTime(finalTime)
+//                            .build();
+//                })
+//                .collect(Collectors.toList());
+//    }
 
-                    return ReplyResponse.builder()
-                            .replyId(reply.getReplyId())
-                            .userId(reply.getUser().getUserId())
-                            .groupId(reply.getGroup().getGroupId())
-                            .content(reply.getContent())
-                            .finalTime(finalTime)
-                            .build();
-                })
+    @Transactional(readOnly = true)
+    public List<ReplyResponse> findAll(int groupID) {
+        Set<Long> visited = new HashSet<>();
+        return replyRepository.findAllByGroup_GroupId(groupID).stream()
+                // 최상위(부모) 댓글만 필터링
+                .filter(reply -> reply.getParentReply() == null)
+                // 재귀 매핑
+                .map(reply -> toDto(reply, visited))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
+        }
 
     public Reply update(long replyId, ReplyRequest request){
         Reply reply = replyRepository.findById(replyId)
@@ -98,11 +115,42 @@ public class ReplyService {
                             .groupId(child.getGroup().getGroupId())
                             .content(child.getContent())
                             .finalTime(finalTime)
-                            .parentReplyId(parentId)
                             .build();
                 })
                 .collect(Collectors.toList());
     }
+
+    private ReplyResponse toDto(Reply e, Set<Long> visited) {
+        // 이미 방문한 댓글이면 순환 방지
+        if (!visited.add(e.getReplyId())) {
+            return null;
+        }
+
+        LocalDateTime finalTime =
+                e.getUpdatedAt() != null ? e.getUpdatedAt() : e.getCreatedAt();
+
+        ReplyResponse dto = ReplyResponse.builder()
+                .replyId(e.getReplyId())
+                .userId(e.getUser().getUserId())
+                .groupId(e.getGroup().getGroupId())
+                .content(e.getContent())
+                .finalTime(finalTime)
+                .childReplies(new ArrayList<>())
+                .build();
+
+        // 자식 댓글들 재귀 매핑
+        for (Reply child : e.getChildReplies()) {
+            ReplyResponse childDto = toDto(child, visited);
+            if (childDto != null) {
+                dto.getChildReplies().add(childDto);
+            }
+        }
+
+        // 매핑 끝나면 방문 목록에서 제거
+        visited.remove(e.getReplyId());
+        return dto;
+    }
+
 
 
 }

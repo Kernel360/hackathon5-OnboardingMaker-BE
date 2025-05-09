@@ -1,20 +1,11 @@
 package com.example.onboarding.service;
 
-import com.example.onboarding.dto.LoginRequestDto;
 import com.example.onboarding.dto.UserRequestDto;
-import com.example.onboarding.dto.UserResponseDto;
 import com.example.onboarding.entity.User;
 import com.example.onboarding.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import jakarta.servlet.http.HttpServletRequest;
-
-
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +15,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void register(UserRequestDto dto) {
+        // 이메일 중복 검사
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
+        // 비밀번호 암호화 후 사용자 엔티티 생성 및 저장
         User user = User.builder()
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
@@ -34,39 +27,5 @@ public class UserService {
                 .isAdmin(dto.isAdmin())
                 .build();
         userRepository.save(user);
-    }
-
-    public UserResponseDto login(LoginRequestDto dto, HttpServletRequest request)
-    {
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
-
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 인증 객체 생성
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.isAdmin() ? "ADMIN" : "USER")
-                .build();
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        request.getSession().setAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                SecurityContextHolder.getContext()
-        );
-
-        // 로그인 응답
-        return UserResponseDto.builder()
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .isAdmin(user.isAdmin())
-                .build();
     }
 }

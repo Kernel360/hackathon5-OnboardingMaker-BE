@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ReplyResponse {
-    private long replyId;
+    private int replyId;
     private int userId;
     private int groupId;
     private String content;

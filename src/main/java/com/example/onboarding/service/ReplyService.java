@@ -38,30 +38,12 @@ public class ReplyService {
                 .group(group)
                 .content(request.getContent())
                 .build();
-        return replyRepository.save(reply);
+        return replyRepository.saveAndFlush(reply);
     }
-
-//    public List<ReplyResponse> findAll(int groupID) {
-//        return replyRepository.findAllByGroup_GroupId(groupID).stream()
-//                .map(reply -> {
-//                    LocalDateTime finalTime = reply.getUpdatedAt() != null
-//                            ? reply.getUpdatedAt()
-//                            : reply.getCreatedAt();
-//
-//                    return ReplyResponse.builder()
-//                            .replyId(reply.getReplyId())
-//                            .userId(reply.getUser().getUserId())
-//                            .groupId(reply.getGroup().getGroupId())
-//                            .content(reply.getContent())
-//                            .finalTime(finalTime)
-//                            .build();
-//                })
-//                .collect(Collectors.toList());
-//    }
 
     @Transactional(readOnly = true)
     public List<ReplyResponse> findAll(int groupID) {
-        Set<Long> visited = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         return replyRepository.findAllByGroup_GroupId(groupID).stream()
                 // 최상위(부모) 댓글만 필터링
                 .filter(reply -> reply.getParentReply() == null)
@@ -71,7 +53,7 @@ public class ReplyService {
                 .collect(Collectors.toList());
         }
 
-    public Reply update(long replyId, ReplyRequest request){
+    public Reply update(int replyId, ReplyRequest request){
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new RuntimeException("Reply not found with id: " + replyId));
 
@@ -79,12 +61,12 @@ public class ReplyService {
         return replyRepository.save(reply);
     }
 
-    public void deleteById(long replyId) {
+    public void deleteById(int replyId) {
         replyRepository.deleteById(replyId);
     }
 
     // 대댓글
-    public Reply saveNestedReply(Long parentId, ReplyRequest request) {
+    public Reply saveNestedReply(Integer parentId, ReplyRequest request) {
         Reply parent = replyRepository.findById(parentId)
                 .orElseThrow(() -> new RuntimeException("Parent reply not found: " + parentId));
 
@@ -103,7 +85,7 @@ public class ReplyService {
         return replyRepository.save(nested);
     }
 
-    public List<ReplyResponse> findNestedReplies(Long parentId) {
+    public List<ReplyResponse> findNestedReplies(Integer parentId) {
         return replyRepository.findByParentReply_ReplyIdOrderByCreatedAtAsc(parentId).stream()
                 .map(child -> {
                     LocalDateTime finalTime = child.getUpdatedAt() != null
@@ -120,7 +102,7 @@ public class ReplyService {
                 .collect(Collectors.toList());
     }
 
-    private ReplyResponse toDto(Reply e, Set<Long> visited) {
+    private ReplyResponse toDto(Reply e, Set<Integer> visited) {
         // 이미 방문한 댓글이면 순환 방지
         if (!visited.add(e.getReplyId())) {
             return null;

@@ -9,5 +9,5 @@ public class ReplyRequest {
     private int userId;
     private int groupId;
     private String content;
-    private Long parentReplyId;
+    private int parentReplyId;
 }

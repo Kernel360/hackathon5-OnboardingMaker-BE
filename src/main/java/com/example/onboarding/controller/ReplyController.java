@@ -22,7 +22,7 @@ public class ReplyController {
 
     @PostMapping("")
     public ReplyResponse createReply(@RequestBody ReplyRequest request){
-        Set<Long> visited = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         return toDto(replyService.save(request), visited);
     }
 
@@ -33,7 +33,7 @@ public class ReplyController {
 
     @PutMapping("/{replyId}")
     public ReplyResponse updateReply(@PathVariable("replyId") int replyId, @RequestBody ReplyRequest request) {
-        Set<Long> visited = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         return toDto(replyService.update(replyId, request), visited);
     }
 
@@ -44,18 +44,18 @@ public class ReplyController {
 
     // 대댓글
     @PostMapping("/{parentId}/nested")
-    public ReplyResponse createNestedReply(@PathVariable Long parentId,
+    public ReplyResponse createNestedReply(@PathVariable Integer parentId,
                                    @RequestBody ReplyRequest request) {
-        Set<Long> visited = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         return toDto(replyService.saveNestedReply(parentId, request), visited);
     }
 
     @GetMapping("/{parentId}/nested")
-    public List<ReplyResponse> getNestedReplies(@PathVariable Long parentId) {
+    public List<ReplyResponse> getNestedReplies(@PathVariable Integer parentId) {
         return replyService.findNestedReplies(parentId);
     }
 
-    private ReplyResponse toDto(Reply e, Set<Long> visited) {
+    private ReplyResponse toDto(Reply e, Set<Integer> visited) {
 
         if (!visited.add(e.getReplyId())) {
             // 이미 매핑한 댓글이면 재귀 중단

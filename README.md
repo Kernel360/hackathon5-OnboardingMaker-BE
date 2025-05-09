@@ -1,7 +1,5 @@
 # 🚀 OnboardingMaker-BE
 
-<img src="https://i.imgur.com/KY5jQ7x.png" alt="OnboardingMaker Logo" width="200" />
-
 > **온보딩을 단순화하고, 해커톤 만큼 빠르게!**
 
 ---
